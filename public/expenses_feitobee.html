@@ -34,65 +34,12 @@
 
     <script>
 
-      // $.fn.clearForm = function() {
-      //   return this.each(function() {
-      //     var type = this.type, tag = this.tagName.toLowerCase();
-      //     if (tag == 'form')
-      //       return $(':input',this).clearForm();
-      //     if (type == 'text' || type == 'password' || tag == 'textarea')
-      //       this.value = '';
-      //     else if (type == 'checkbox' || type == 'radio')
-      //       this.checked = false;
-      //     else if (tag == 'select')
-      //       this.selectedIndex = -1;
-      //   });
-      // };
-
-      // var g_today;
-
-      // $(document).ready( function() {
-      //     var now = new Date();
-      //     var month = (now.getMonth() + 1);
-      //     var day = now.getDate();
-      //     if(month < 10)
-      //         month = "0" + month;
-      //     if(day < 10)
-      //         day = "0" + day;
-      //     var today = now.getFullYear() + '-' + month + '-' + day;
-      //     $('#datePicker').val(today);
-      //     // g_today = val(today);
-      //     // $scope.datePicker = val(today);
-      // });
-
-      // $("input[type='reset']").on("click", function(event){
-      //
-      //    event.preventDefault();
-      //    // stops the form from resetting after this function
-      //
-      //    $(this).closest('form').get(0).reset();
-      //    // resets the form before continuing the function
-      //
-      //    var now = new Date();
-      //    var month = (now.getMonth() + 1);
-      //    var day = now.getDate();
-      //    if(month < 10)
-      //        month = "0" + month;
-      //    if(day < 10)
-      //        day = "0" + day;
-      //    var today = now.getFullYear() + '-' + month + '-' + day;
-      //    $('#datePicker').val(today);
-      //
-      // });
-
-          Parse.initialize("dCxojn2rtpic9RlfY6mjwTqWHNjHqsUOvwzPTl0Y","7EiCWZRWL8jgwnQRUmzwT1oHjichXSCZp7KvKeHI");
-          var ExpensesClass = Parse.Object.extend("Expenses");
-          var query = new Parse.Query(ExpensesClass);
-          // var g_logged_in = false;
-
-          var currentUser = Parse.User.current();
+      Parse.initialize("dCxojn2rtpic9RlfY6mjwTqWHNjHqsUOvwzPTl0Y","7EiCWZRWL8jgwnQRUmzwT1oHjichXSCZp7KvKeHI");
+      var ExpensesClass = Parse.Object.extend("Expenses");
+      var query = new Parse.Query(ExpensesClass);
+      var currentUser = Parse.User.current();
 
       function AngularController($scope, UserService){
-
 
           var now = new Date();
           var month = (now.getMonth() + 1);
@@ -120,24 +67,13 @@
           $('#tname').selectmenu('refresh', true);
           $("#Cash").attr("checked",true).checkboxradio("refresh");
 
-          // $scope.loggedname = $scope.logged_name_opt[0];
-          // if (currentUser) {
-          //   if (currentUser.get('username') == 'billy') {
-          //     $scope.loggedname = $scope.logged_name_opt[2];
-          //   } else {
-          //     $scope.loggedname = $scope.logged_name_opt[1];
-          //   }
-          // }else{
-          //   scope.loggedname = scope.logged_name_opt[0];
-          // }
           if (currentUser) {
             $("#loggedUser").val(currentUser.get('username'));//currentUser.get('username'));
             $scope.loggedname = currentUser.get('username');
           }else {
-            $("#loggedUser").val('');//currentUser.get('username'));
+            $("#loggedUser").val('');
             $scope.loggedname = null;
           }
-          // $("#loggedUser").val(null);//currentUser.get('username'));
           $('#loggedUser').selectmenu('refresh', true);
 
           angular.element(document).ready(function () {
@@ -147,28 +83,10 @@
               $('#submitButton').button('refresh');
               // do stuff with the user
               console.log("alrd logged in ", currentUser.get('username'));
-              // g_logged_in = true;
-                // if (currentUser.get('username') == 'billy') {
-                //   $scope.loggedname = $scope.logged_name_opt[2];
-                //   $("#loggedUser").val("billy");//currentUser.get('username'));
-                //   $('#loggedUser').selectmenu('refresh', true);
-                // } else {
-                //   $scope.loggedname = $scope.logged_name_opt[1];
-                // }
               var scope = angular.element($("#outer")).scope();
               scope.$apply(function(){
                 scope.submit_enabled = true;
                 scope.currentUser = currentUser;
-                // scope.loggedname = currentUser.get('username');
-                // var x = document.getElementById("loggedUser");
-                // x.selectmenu('refresh');
-                // $('select').selectmenu('refresh',true);
-                // $('#loggedUser').val('billy');//currentUser.get('username'));
-                    // if (currentUser.get('username') == 'billy') {
-                    //   scope.loggedname = scope.logged_name_opt[2];
-                    // } else {
-                    //   scope.loggedname = scope.logged_name_opt[1];
-                    // }
               })
               retrieveSaldoAkhir();
             } else {
@@ -178,48 +96,7 @@
               scope.$apply(function(){
                 scope.submit_enabled = false;
               })
-              // show the signup or login page
-              /*
-              Parse.User.logIn("feifei", "gatau", {
-              // Parse.User.logIn("billy", "dancux", {
-                success: function(user) {
-                  // Do stuff after successful login.
-                  console.log("success login", user.get('username'));
-                  // g_logged_in = true;
-                  var scope = angular.element($("#outer")).scope();
-                  scope.$apply(function(){
-                    scope.submit_enabled = true;
-                    scope.currentUser = user;
-                    // scope.loggedname = user.get('username');
-                    // if (user.get('username') == 'billy') {
-                    //   scope.loggedname = scope.logged_name_opt[2];
-                    // } else {
-                    //   scope.loggedname = scope.logged_name_opt[1];
-                    // }
-                  })
-                  retrieveSaldoAkhir();
-                },
-                error: function(user, error) {
-                  // The login failed. Check error to see why.
-                  console.log("failed login!!!");
-                  var scope = angular.element($("#outer")).scope();
-                  scope.$apply(function(){
-                    scope.submit_enabled = false;
-                    // scope.loggedname = '';
-                    // scope.loggedname = scope.logged_name_opt[0];
-                  })
-                }
-              });
-              */
             }
-            // if (g_logged_in) {
-            //   UserService.user_name = currentUser.get('username');
-            //   $scope.submit_enabled = true;
-            // } else {
-            //   UserService.user_name = '';
-            //   $scope.submit_enabled = false;
-            // }
-            // retrieveSaldoAkhir();
           });
 
           function retrieveSaldoAkhir(){
@@ -227,7 +104,6 @@
             query.equalTo('username',$scope.currentUser.get('username'))
             query.first({
               success: function (obj) {
-                // UserService.saldo_akhir = (obj.get("Description"));
                 if (typeof obj === "undefined"){
                   UserService.saldo_akhir = 'laporan ke billy, error in database, no last entry can be queried';
                 } else {
@@ -239,8 +115,6 @@
                 scope.$apply(function(){
                   scope.saldo_akhir = UserService.saldo_akhir;
                 })
-                // $scope.saldo_akhir = UserService.saldo_akhir;
-                // console.log($scope.saldo_akhir);
               },
               error: function (error) {
                 alert("Error: " + error.code + " " + error.message);
@@ -250,7 +124,6 @@
 
 
           function updateSaldoAkhir(tname, tval){
-            // if (UserService.date_changed == false){
               switch (tname){
                 case 'correction_plus':
                 case 'atm':
@@ -261,7 +134,6 @@
               }
               if (UserService.saldo_akhir === null)
                 UserService.saldo_akhir = 'jahat ga kasitau';
-            // }
           }
 
         $scope.send = function send() {
@@ -278,16 +150,15 @@
             _transaction_object.set("Type",$scope.tname);
             _transaction_object.set("Description",$scope.dname);
             _transaction_object.set("Value",$scope.tval);
-            // if ($scope.date_changed == false && $scope.dompet_cash == true) updateSaldoAkhir($scope.tname, $scope.tval);
+
             if ($scope.dompet_cash == true) updateSaldoAkhir($scope.tname, $scope.tval);
+
             _transaction_object.set("Cash",$scope.dompet_cash);
             _transaction_object.set("Saldo",UserService.saldo_akhir);
-            // _transaction_object.set("Tanggal",$scope.tdate);
-            // _transaction_object.set("Tanggal",new Date('2015-09-09'));
             _transaction_object.set("Tanggal",(UserService.transaction_date));
-            // _transaction_object.set("username",(UserService.user_name));
             _transaction_object.set("username",$scope.currentUser.get('username'));
             _transaction_object.setACL(new Parse.ACL(Parse.User.current()));
+
             $('#submitButton').prop('disabled',true);
             $('#submitButton').button('refresh');
             _transaction_object.save().then(
@@ -298,19 +169,12 @@
                 $('#submitButton').prop('disabled',false);
                 $('#submitButton').button('refresh');
               },
-              // function(object, error) {
               function(error) {
-                // alert("something wrong");
                 alert('Failed to create new object, with error code: ' + error.message);
                 console.log("something wrong");
               }
             );
 
-            // $scope.tname = "invalid";
-            // $scope.dname = '';
-            // $scope.tval  = '';
-            // $( "form" )[ 0 ].reset();
-            // $scope.tdate = new Date();
             if (false == $scope.date_changed){
               var now = new Date();
               var month = (now.getMonth() + 1);
@@ -320,10 +184,8 @@
               if(day < 10)
                   day = "0" + day;
               var today = now.getFullYear() + '-' + month + '-' + day;
-              // var today = day + '/' + month + '/' + now.getFullYear();
               $scope.tdate = today;
-              // $scope.tdate = new Date($scope.tdate);
-              UserService.transaction_date = now;//new Date($scope.tdate);
+              UserService.transaction_date = now;
               console.log("init Date: ", $scope.tdate);
               console.log("transact Date: ", UserService.transaction_date);
 
@@ -337,7 +199,6 @@
         };
 
         $scope.setDate = function setDate() {
-          // $scope.tdate = new Date($scope.tdate);
           UserService.transaction_date = new Date($scope.tdate);
           console.log("setDate: ", $scope.tdate);
           console.log("transact Date: ", UserService.transaction_date);
@@ -360,10 +221,8 @@
             if(day < 10)
                 day = "0" + day;
             var today = now.getFullYear() + '-' + month + '-' + day;
-            // var today = day + '/' + month + '/' + now.getFullYear();
             $scope.tdate = today;
-            // $scope.tdate = new Date($scope.tdate);
-            UserService.transaction_date = now;//new Date($scope.tdate);
+            UserService.transaction_date = now;
             console.log("init Date: ", $scope.tdate);
             console.log("transact Date: ", UserService.transaction_date);
 
@@ -371,7 +230,6 @@
             scope.$apply(function(){
               scope.display_date = UserService.transaction_date;
             })
-            // $scope.display_date = UserService.transaction_date;
 
             $('#datePicker').val(today);
           });
@@ -386,12 +244,7 @@
               $('#submitButton').prop('disabled',true);
               $('#submitButton').button('refresh');
               Parse.User.logOut();
-              // var scope = angular.element($("#outer")).scope();
-              // scope.$apply(function(){
-              //   scope.submit_enabled = false;
-              // })
               if (currentUser) {
-                  // do stuff with the user
                   Parse.User.logOut();
               }
               alert('logged out, please login again for input data');
@@ -401,29 +254,20 @@
             case 'billy':
               console.log('logining billy');
               if (currentUser) {
-                  // do stuff with the user
                   Parse.User.logOut();
               }
               $('#submitButton').prop('disabled',true);
               $('#submitButton').button('refresh');
-              // Parse.User.logIn("feifei", "gatau", {
               Parse.User.logIn("billy", "dancux", {
                 success: function(user) {
                   $('#submitButton').prop('disabled',false);
                   $('#submitButton').button('refresh');
                   // Do stuff after successful login.
                   console.log("success login", user.get('username'));
-                  // g_logged_in = true;
                   var scope = angular.element($("#outer")).scope();
                   scope.$apply(function(){
                     scope.submit_enabled = true;
                     scope.currentUser = user;
-                    // scope.loggedname = user.get('username');
-                    // if (user.get('username') == 'billy') {
-                    //   scope.loggedname = scope.logged_name_opt[2];
-                    // } else {
-                    //   scope.loggedname = scope.logged_name_opt[1];
-                    // }
                   })
                   retrieveSaldoAkhir();
                   $("#inputform").trigger('reset');
@@ -455,7 +299,6 @@
               $('#submitButton').prop('disabled',true);
               $('#submitButton').button('refresh');
               Parse.User.logIn("feifei", "gatau", {
-              // Parse.User.logIn("billy", "dancux", {
                 success: function(user) {
                   $('#submitButton').prop('disabled',false);
                   $('#submitButton').button('refresh');
@@ -466,12 +309,6 @@
                   scope.$apply(function(){
                     scope.submit_enabled = true;
                     scope.currentUser = user;
-                    // scope.loggedname = user.get('username');
-                    // if (user.get('username') == 'billy') {
-                    //   scope.loggedname = scope.logged_name_opt[2];
-                    // } else {
-                    //   scope.loggedname = scope.logged_name_opt[1];
-                    // }
                   })
                   retrieveSaldoAkhir();
                   $("#inputform").trigger('reset');
@@ -486,8 +323,6 @@
                   var scope = angular.element($("#outer")).scope();
                   scope.$apply(function(){
                     scope.submit_enabled = false;
-                    // scope.loggedname = '';
-                    // scope.loggedname = scope.logged_name_opt[0];
                   })
                   $("#inputform").trigger('reset');
                   $scope.resetForm();
@@ -496,23 +331,10 @@
               break;
           }
         }
-        // $scope.selectFromArray = function selectFromArray(){
-        //   // $scope.loggedname = $scope.logged_name_opt[2];
-        //   console.log("semak!")
-        //   // $scope.billy_selected = true;
-        //   //refresh and force rebuild
-        //   // $('#loggedUser').selectmenu('refresh', true);
-        // }
       }
 
       $(document).ready(function(){
         $("#Cash").attr("checked",true).checkboxradio("refresh");
-      //   $("#testButton").click(function(){
-      //     console.log("semak!")
-      //     // $("#loggedUser").val("billy");//currentUser.get('username'));
-      //     $("#loggedUser").val(null);//currentUser.get('username'));
-      //     $('#loggedUser').selectmenu('refresh', true);
-      //   });
       });
 
       var app = angular.module("expenseApp",[]);
@@ -520,59 +342,14 @@
         return {
             transaction_date : new Date(),
             saldo_akhir      : 0,
-            // currentUser      : null
-            // user_name        : ''
-            // date_changed     : false
         };
       });
-      // app.value('TransactDate',{tdate:0});
-      //
-      // app.directive('myDatepicker',
-      // function ($parse) {
-      //     return function (scope, element, attrs, controller) {
-      //         var ngModel = $parse(attrs.ngModel);
-      //         $(function(){
-      //             element.datepicker({
-      //                 showOn:"both",
-      //                 changeYear:true,
-      //                 changeMonth:true,
-      //                 dateFormat:'yy-mm-dd',
-      //                 maxDate: new Date(),
-      //                 yearRange: '1920:2020',
-      //                 onSelect:function (dateText, inst) {
-      //                     scope.$apply(function(scope){
-      //                         // Change binded variable
-      //                         ngModel.assign(scope, dateText);
-      //                     });
-      //                 }
-      //             });
-      //         });
-      //     }
-      // });
-
-
-              // function(dateFilter) {
-              //         return {
-              //                 require: 'ngModel',
-              //                 template: '<input type="date" name="datePicker" id="datePicker" value=""></input>',
-              //                 replace: true,
-              //
-              //                 link: function(scope, elm, attrs, ngModelCtrlVal) {
-              //                         ngModelCtrlVal.$formatters.unshift(function(val) {
-              //                                 return dateFilter(val, 'yyyy/MM/dd');
-              //                         });
-              //
-              //                         ngModelCtrlVal.$parsers.unshift(function(val) {
-              //                                 return new Date(val);
-              //                         });
-              //                 },
-              //         };
-              // });
-
     </script>
     <title>Expenses Data Input</title>
 
   </head>
+
+
   <body>
     <div id="outer" ng-controller="AngularController">
 
@@ -621,10 +398,7 @@
 
 
             <label for="datePicker">Tanggal transaksi (Otomatis diset ke sekarang, hanya ubah bila diperlukan)</label>
-            <!-- <input type="text" name="datePicker" id="datePicker" value="" ng-model="tdate" my-datepicker/> -->
-	     	    <!-- <input type="datePicker" name="datePicker" id="datePicker" value=""  ng-model="datePicker"/> -->
 	     	    <input type="date" name="datePicker" id="datePicker" value=""  ng-model="tdate" ng-change="setDate()"/>
-            <!-- <input date-input-time ng-model="tdate" /> -->
 
             <input type="reset"  value="Reset" ng-click="resetForm()">
             <input id="submitButton" type="submit" value="Simpan" ng-disabled="!submit_enabled">
@@ -633,33 +407,25 @@
         </div>
 
         <div data-role="main" class="ui-content">
-        <!-- <div> -->
           <form name="loginform" id="loginform">
             <label for="loggedUser">Terlogin sebagai</label>
             <select id="loggedUser" name="loggedUser" ng-model="loggedname" ng-change="loginChange()" >
-            <!-- ng-options="o.name for o in logged_name_opt track by o.name"
-             ng-init = 'loggedname  = logged_name_opt[0]'> -->
               <option value="">---Log out(please login first)---</option>
               <option value="feifei">feifei</option>
               <option value="billy">billy</option>
             </select>
           </form>
         </div>
-        <!-- <div>
-          <!-- <a class="btn" ng-click="selectFromArray()">select from array</a> -->
-          <!-- <a class="btn" id="testButton">select from array</a> -->
-        <!-- </div> -->
 
         <div data-role="footer">
           <h1>v0.01</h1>
         </div>
 
-        <!-- <tt>value = {{tdate | date: "yyyy-MM-ddTHH:mm:ss"}}</tt><br/> -->
         <tt>saldo = {{saldo_akhir}},datetime = {{display_date | date: "yyyy-MM-ddTHH:mm:ss"}}, datechanged={{date_changed}}, loggedin={{submit_enabled}}, as {{loggedname}}, dari dompet={{dompet_cash}}</tt><br/>
 
-      </div><!-- <div data-role="page"> -->
+      </div>
 
-    </div> <!-- <div ng-controller="AngularController">  -->
+    </div>
 
   </body>
 
