@@ -1,0 +1,10 @@
+{
+  "applications": {
+    "KolakBeras": {
+      "applicationId": "dCxojn2rtpic9RlfY6mjwTqWHNjHqsUOvwzPTl0Y"
+    },
+    "_default": {
+      "link": "KolakBeras"
+    }
+  }
+}

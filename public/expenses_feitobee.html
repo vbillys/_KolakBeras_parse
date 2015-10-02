@@ -1,0 +1,666 @@
+<!doctype html>
+<html lang="en" ng-app="expenseApp">
+<!-- <html lang="en" ng-app> -->
+<!-- <html lang="en"> -->
+  <head>
+    <!-- Include meta tag to ensure proper rendering and touch zooming -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex, nofollow">
+
+    <!-- Include jQuery Mobile stylesheets -->
+    <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">
+    <!-- <link rel="stylesheet" href="../../docs/_assets/css/jqm-docs.css" /> -->
+  	<link rel="stylesheet"  href="jquery.ui.datepicker.mobile.css" />
+
+    <!-- Include the jQuery library -->
+    <script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+    <script>
+  		//reset type=date inputs to text
+  		$( document ).bind( "mobileinit", function(){
+  			$.mobile.page.prototype.options.degradeInputs.date = true;
+  		});
+  	</script>
+
+    <!-- Include the jQuery Mobile library -->
+    <script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+    <script src="jQuery.ui.datepicker.js"></script>
+  	<script src="jquery.ui.datepicker.mobile.js"></script>
+
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.1/angular.min.js"> </script> -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.4/angular.js"></script>
+
+    <!-- <script src="//www.parsecdn.com/js/parse-1.6.0.min.js"></script> -->
+    <script src="parse-1.6.0.min.js"></script>
+
+    <script>
+
+      // $.fn.clearForm = function() {
+      //   return this.each(function() {
+      //     var type = this.type, tag = this.tagName.toLowerCase();
+      //     if (tag == 'form')
+      //       return $(':input',this).clearForm();
+      //     if (type == 'text' || type == 'password' || tag == 'textarea')
+      //       this.value = '';
+      //     else if (type == 'checkbox' || type == 'radio')
+      //       this.checked = false;
+      //     else if (tag == 'select')
+      //       this.selectedIndex = -1;
+      //   });
+      // };
+
+      // var g_today;
+
+      // $(document).ready( function() {
+      //     var now = new Date();
+      //     var month = (now.getMonth() + 1);
+      //     var day = now.getDate();
+      //     if(month < 10)
+      //         month = "0" + month;
+      //     if(day < 10)
+      //         day = "0" + day;
+      //     var today = now.getFullYear() + '-' + month + '-' + day;
+      //     $('#datePicker').val(today);
+      //     // g_today = val(today);
+      //     // $scope.datePicker = val(today);
+      // });
+
+      // $("input[type='reset']").on("click", function(event){
+      //
+      //    event.preventDefault();
+      //    // stops the form from resetting after this function
+      //
+      //    $(this).closest('form').get(0).reset();
+      //    // resets the form before continuing the function
+      //
+      //    var now = new Date();
+      //    var month = (now.getMonth() + 1);
+      //    var day = now.getDate();
+      //    if(month < 10)
+      //        month = "0" + month;
+      //    if(day < 10)
+      //        day = "0" + day;
+      //    var today = now.getFullYear() + '-' + month + '-' + day;
+      //    $('#datePicker').val(today);
+      //
+      // });
+
+          Parse.initialize("dCxojn2rtpic9RlfY6mjwTqWHNjHqsUOvwzPTl0Y","7EiCWZRWL8jgwnQRUmzwT1oHjichXSCZp7KvKeHI");
+          var ExpensesClass = Parse.Object.extend("Expenses");
+          var query = new Parse.Query(ExpensesClass);
+          // var g_logged_in = false;
+
+          var currentUser = Parse.User.current();
+
+      function AngularController($scope, UserService){
+
+
+          var now = new Date();
+          var month = (now.getMonth() + 1);
+          var day = now.getDate();
+          if(month < 10)
+              month = "0" + month;
+          if(day < 10)
+              day = "0" + day;
+          var today = now.getFullYear() + '-' + month + '-' + day;
+          // var today = day + '/' + month + '/' + now.getFullYear();
+          $scope.tdate = today;
+          // $scope.tdate = new Date($scope.tdate);
+          UserService.transaction_date = now;//new Date($scope.tdate);
+          console.log("init Date: ", $scope.tdate);
+          console.log("transact Date: ", UserService.transaction_date);
+          $scope.display_date = UserService.transaction_date;
+          $scope.date_changed = false;
+          $scope.currentUser = null;
+          $scope.logged_name_opt =  [{ name: "Login first", id: '0'}, { name: "feifei", id: '1'}, { name: "billy", id: '2'}, {name: "ampun", id: '3'}];
+          $scope.submit_enabled = false;
+          $scope.dompet_cash = true;
+          $('#submitButton').prop('disabled',true);
+          $('#submitButton').button('refresh');
+          $("#tname").val('invalid');
+          $('#tname').selectmenu('refresh', true);
+          $("#Cash").attr("checked",true).checkboxradio("refresh");
+
+          // $scope.loggedname = $scope.logged_name_opt[0];
+          // if (currentUser) {
+          //   if (currentUser.get('username') == 'billy') {
+          //     $scope.loggedname = $scope.logged_name_opt[2];
+          //   } else {
+          //     $scope.loggedname = $scope.logged_name_opt[1];
+          //   }
+          // }else{
+          //   scope.loggedname = scope.logged_name_opt[0];
+          // }
+          if (currentUser) {
+            $("#loggedUser").val(currentUser.get('username'));//currentUser.get('username'));
+            $scope.loggedname = currentUser.get('username');
+          }else {
+            $("#loggedUser").val('');//currentUser.get('username'));
+            $scope.loggedname = null;
+          }
+          // $("#loggedUser").val(null);//currentUser.get('username'));
+          $('#loggedUser').selectmenu('refresh', true);
+
+          angular.element(document).ready(function () {
+            $("#Cash").attr("checked",true).checkboxradio("refresh");
+            if (currentUser) {
+              $('#submitButton').prop('disabled',false);
+              $('#submitButton').button('refresh');
+              // do stuff with the user
+              console.log("alrd logged in ", currentUser.get('username'));
+              // g_logged_in = true;
+                // if (currentUser.get('username') == 'billy') {
+                //   $scope.loggedname = $scope.logged_name_opt[2];
+                //   $("#loggedUser").val("billy");//currentUser.get('username'));
+                //   $('#loggedUser').selectmenu('refresh', true);
+                // } else {
+                //   $scope.loggedname = $scope.logged_name_opt[1];
+                // }
+              var scope = angular.element($("#outer")).scope();
+              scope.$apply(function(){
+                scope.submit_enabled = true;
+                scope.currentUser = currentUser;
+                // scope.loggedname = currentUser.get('username');
+                // var x = document.getElementById("loggedUser");
+                // x.selectmenu('refresh');
+                // $('select').selectmenu('refresh',true);
+                // $('#loggedUser').val('billy');//currentUser.get('username'));
+                    // if (currentUser.get('username') == 'billy') {
+                    //   scope.loggedname = scope.logged_name_opt[2];
+                    // } else {
+                    //   scope.loggedname = scope.logged_name_opt[1];
+                    // }
+              })
+              retrieveSaldoAkhir();
+            } else {
+              $('#submitButton').prop('disabled',true);
+              $('#submitButton').button('refresh');
+              var scope = angular.element($("#outer")).scope();
+              scope.$apply(function(){
+                scope.submit_enabled = false;
+              })
+              // show the signup or login page
+              /*
+              Parse.User.logIn("feifei", "gatau", {
+              // Parse.User.logIn("billy", "dancux", {
+                success: function(user) {
+                  // Do stuff after successful login.
+                  console.log("success login", user.get('username'));
+                  // g_logged_in = true;
+                  var scope = angular.element($("#outer")).scope();
+                  scope.$apply(function(){
+                    scope.submit_enabled = true;
+                    scope.currentUser = user;
+                    // scope.loggedname = user.get('username');
+                    // if (user.get('username') == 'billy') {
+                    //   scope.loggedname = scope.logged_name_opt[2];
+                    // } else {
+                    //   scope.loggedname = scope.logged_name_opt[1];
+                    // }
+                  })
+                  retrieveSaldoAkhir();
+                },
+                error: function(user, error) {
+                  // The login failed. Check error to see why.
+                  console.log("failed login!!!");
+                  var scope = angular.element($("#outer")).scope();
+                  scope.$apply(function(){
+                    scope.submit_enabled = false;
+                    // scope.loggedname = '';
+                    // scope.loggedname = scope.logged_name_opt[0];
+                  })
+                }
+              });
+              */
+            }
+            // if (g_logged_in) {
+            //   UserService.user_name = currentUser.get('username');
+            //   $scope.submit_enabled = true;
+            // } else {
+            //   UserService.user_name = '';
+            //   $scope.submit_enabled = false;
+            // }
+            // retrieveSaldoAkhir();
+          });
+
+          function retrieveSaldoAkhir(){
+            query.descending('createdAt');
+            query.equalTo('username',$scope.currentUser.get('username'))
+            query.first({
+              success: function (obj) {
+                // UserService.saldo_akhir = (obj.get("Description"));
+                if (typeof obj === "undefined"){
+                  UserService.saldo_akhir = 'laporan ke billy, error in database, no last entry can be queried';
+                } else {
+                  UserService.saldo_akhir = (obj.get("Saldo"));
+                }
+
+                console.log("Saldo retrieved: ", UserService.saldo_akhir);
+                var scope = angular.element($("#outer")).scope();
+                scope.$apply(function(){
+                  scope.saldo_akhir = UserService.saldo_akhir;
+                })
+                // $scope.saldo_akhir = UserService.saldo_akhir;
+                // console.log($scope.saldo_akhir);
+              },
+              error: function (error) {
+                alert("Error: " + error.code + " " + error.message);
+              }
+            });
+          }
+
+
+          function updateSaldoAkhir(tname, tval){
+            // if (UserService.date_changed == false){
+              switch (tname){
+                case 'correction_plus':
+                case 'atm':
+                  UserService.saldo_akhir += tval;
+                  break;
+                default:
+                  UserService.saldo_akhir -= tval;
+              }
+              if (UserService.saldo_akhir === null)
+                UserService.saldo_akhir = 'jahat ga kasitau';
+            // }
+          }
+
+        $scope.send = function send() {
+          if ($scope.tname == "invalid" || !$scope.tname) {
+            alert("Tolong pilih jenis transaksi");
+          } else if (!$scope.dname) {
+            alert("Keterangan transaksi harus diisi")
+          } else if (!$scope.tval) {
+            alert("Tolong masukkan nilai transaksi");
+          } else {
+            console.log($scope.tname, $scope.dname, $scope.tval, UserService.transaction_date);
+
+            var _transaction_object = new ExpensesClass();
+            _transaction_object.set("Type",$scope.tname);
+            _transaction_object.set("Description",$scope.dname);
+            _transaction_object.set("Value",$scope.tval);
+            // if ($scope.date_changed == false && $scope.dompet_cash == true) updateSaldoAkhir($scope.tname, $scope.tval);
+            if ($scope.dompet_cash == true) updateSaldoAkhir($scope.tname, $scope.tval);
+            _transaction_object.set("Cash",$scope.dompet_cash);
+            _transaction_object.set("Saldo",UserService.saldo_akhir);
+            // _transaction_object.set("Tanggal",$scope.tdate);
+            // _transaction_object.set("Tanggal",new Date('2015-09-09'));
+            _transaction_object.set("Tanggal",(UserService.transaction_date));
+            // _transaction_object.set("username",(UserService.user_name));
+            _transaction_object.set("username",$scope.currentUser.get('username'));
+            _transaction_object.setACL(new Parse.ACL(Parse.User.current()));
+            $('#submitButton').prop('disabled',true);
+            $('#submitButton').button('refresh');
+            _transaction_object.save().then(
+              function(object) {
+                alert("input sudah diterima. Trims.");
+                console.log("yay! it worked");
+                retrieveSaldoAkhir();
+                $('#submitButton').prop('disabled',false);
+                $('#submitButton').button('refresh');
+              },
+              // function(object, error) {
+              function(error) {
+                // alert("something wrong");
+                alert('Failed to create new object, with error code: ' + error.message);
+                console.log("something wrong");
+              }
+            );
+
+            // $scope.tname = "invalid";
+            // $scope.dname = '';
+            // $scope.tval  = '';
+            // $( "form" )[ 0 ].reset();
+            // $scope.tdate = new Date();
+            if (false == $scope.date_changed){
+              var now = new Date();
+              var month = (now.getMonth() + 1);
+              var day = now.getDate();
+              if(month < 10)
+                  month = "0" + month;
+              if(day < 10)
+                  day = "0" + day;
+              var today = now.getFullYear() + '-' + month + '-' + day;
+              // var today = day + '/' + month + '/' + now.getFullYear();
+              $scope.tdate = today;
+              // $scope.tdate = new Date($scope.tdate);
+              UserService.transaction_date = now;//new Date($scope.tdate);
+              console.log("init Date: ", $scope.tdate);
+              console.log("transact Date: ", UserService.transaction_date);
+
+              $scope.display_date = UserService.transaction_date;
+
+              $('#datePicker').val(today);
+            }
+
+          }
+
+        };
+
+        $scope.setDate = function setDate() {
+          // $scope.tdate = new Date($scope.tdate);
+          UserService.transaction_date = new Date($scope.tdate);
+          console.log("setDate: ", $scope.tdate);
+          console.log("transact Date: ", UserService.transaction_date);
+          $scope.display_date = UserService.transaction_date;
+          $scope.date_changed = true;
+        };
+
+        $scope.resetForm = function resetForm() {
+          $scope.date_changed = false;
+          $scope.tval = '';
+          $scope.dname = '';
+          $scope.tname = "invalid";
+          $scope.dompet_cash = true;
+          setTimeout(function(){
+            var now = new Date();
+            var month = (now.getMonth() + 1);
+            var day = now.getDate();
+            if(month < 10)
+                month = "0" + month;
+            if(day < 10)
+                day = "0" + day;
+            var today = now.getFullYear() + '-' + month + '-' + day;
+            // var today = day + '/' + month + '/' + now.getFullYear();
+            $scope.tdate = today;
+            // $scope.tdate = new Date($scope.tdate);
+            UserService.transaction_date = now;//new Date($scope.tdate);
+            console.log("init Date: ", $scope.tdate);
+            console.log("transact Date: ", UserService.transaction_date);
+
+            var scope = angular.element($("#outer")).scope();
+            scope.$apply(function(){
+              scope.display_date = UserService.transaction_date;
+            })
+            // $scope.display_date = UserService.transaction_date;
+
+            $('#datePicker').val(today);
+          });
+        };
+
+        $scope.loginChange = function loginChange(){
+          switch ($scope.loggedname){
+            case '':
+            default:
+              console.log('logging out');
+              $scope.submit_enabled = false;
+              $('#submitButton').prop('disabled',true);
+              $('#submitButton').button('refresh');
+              Parse.User.logOut();
+              // var scope = angular.element($("#outer")).scope();
+              // scope.$apply(function(){
+              //   scope.submit_enabled = false;
+              // })
+              if (currentUser) {
+                  // do stuff with the user
+                  Parse.User.logOut();
+              }
+              alert('logged out, please login again for input data');
+              $("#inputform").trigger('reset');
+              $scope.resetForm();
+              break;
+            case 'billy':
+              console.log('logining billy');
+              if (currentUser) {
+                  // do stuff with the user
+                  Parse.User.logOut();
+              }
+              $('#submitButton').prop('disabled',true);
+              $('#submitButton').button('refresh');
+              // Parse.User.logIn("feifei", "gatau", {
+              Parse.User.logIn("billy", "dancux", {
+                success: function(user) {
+                  $('#submitButton').prop('disabled',false);
+                  $('#submitButton').button('refresh');
+                  // Do stuff after successful login.
+                  console.log("success login", user.get('username'));
+                  // g_logged_in = true;
+                  var scope = angular.element($("#outer")).scope();
+                  scope.$apply(function(){
+                    scope.submit_enabled = true;
+                    scope.currentUser = user;
+                    // scope.loggedname = user.get('username');
+                    // if (user.get('username') == 'billy') {
+                    //   scope.loggedname = scope.logged_name_opt[2];
+                    // } else {
+                    //   scope.loggedname = scope.logged_name_opt[1];
+                    // }
+                  })
+                  retrieveSaldoAkhir();
+                  $("#inputform").trigger('reset');
+                  $scope.resetForm();
+                },
+                error: function(user, error) {
+                  $('#submitButton').prop('disabled',true);
+                  $('#submitButton').button('refresh');
+                  // The login failed. Check error to see why.
+                  console.log("failed login!!!");
+                  alert("failed login!!!");
+                  var scope = angular.element($("#outer")).scope();
+                  scope.$apply(function(){
+                    scope.submit_enabled = false;
+                    // scope.loggedname = '';
+                    // scope.loggedname = scope.logged_name_opt[0];
+                  })
+                  $("#inputform").trigger('reset');
+                  $scope.resetForm();
+                }
+              });
+              break;
+            case 'feifei':
+              console.log('logining feifei');
+              if (currentUser) {
+                  // do stuff with the user
+                  Parse.User.logOut();
+              }
+              $('#submitButton').prop('disabled',true);
+              $('#submitButton').button('refresh');
+              Parse.User.logIn("feifei", "gatau", {
+              // Parse.User.logIn("billy", "dancux", {
+                success: function(user) {
+                  $('#submitButton').prop('disabled',false);
+                  $('#submitButton').button('refresh');
+                  // Do stuff after successful login.
+                  console.log("success login", user.get('username'));
+                  // g_logged_in = true;
+                  var scope = angular.element($("#outer")).scope();
+                  scope.$apply(function(){
+                    scope.submit_enabled = true;
+                    scope.currentUser = user;
+                    // scope.loggedname = user.get('username');
+                    // if (user.get('username') == 'billy') {
+                    //   scope.loggedname = scope.logged_name_opt[2];
+                    // } else {
+                    //   scope.loggedname = scope.logged_name_opt[1];
+                    // }
+                  })
+                  retrieveSaldoAkhir();
+                  $("#inputform").trigger('reset');
+                  $scope.resetForm();
+                },
+                error: function(user, error) {
+                  $('#submitButton').prop('disabled',true);
+                  $('#submitButton').button('refresh');
+                  // The login failed. Check error to see why.
+                  console.log("failed login!!!");
+                  alert("failed login!!!");
+                  var scope = angular.element($("#outer")).scope();
+                  scope.$apply(function(){
+                    scope.submit_enabled = false;
+                    // scope.loggedname = '';
+                    // scope.loggedname = scope.logged_name_opt[0];
+                  })
+                  $("#inputform").trigger('reset');
+                  $scope.resetForm();
+                }
+              });
+              break;
+          }
+        }
+        // $scope.selectFromArray = function selectFromArray(){
+        //   // $scope.loggedname = $scope.logged_name_opt[2];
+        //   console.log("semak!")
+        //   // $scope.billy_selected = true;
+        //   //refresh and force rebuild
+        //   // $('#loggedUser').selectmenu('refresh', true);
+        // }
+      }
+
+      $(document).ready(function(){
+        $("#Cash").attr("checked",true).checkboxradio("refresh");
+      //   $("#testButton").click(function(){
+      //     console.log("semak!")
+      //     // $("#loggedUser").val("billy");//currentUser.get('username'));
+      //     $("#loggedUser").val(null);//currentUser.get('username'));
+      //     $('#loggedUser').selectmenu('refresh', true);
+      //   });
+      });
+
+      var app = angular.module("expenseApp",[]);
+      app.factory('UserService', function() {
+        return {
+            transaction_date : new Date(),
+            saldo_akhir      : 0,
+            // currentUser      : null
+            // user_name        : ''
+            // date_changed     : false
+        };
+      });
+      // app.value('TransactDate',{tdate:0});
+      //
+      // app.directive('myDatepicker',
+      // function ($parse) {
+      //     return function (scope, element, attrs, controller) {
+      //         var ngModel = $parse(attrs.ngModel);
+      //         $(function(){
+      //             element.datepicker({
+      //                 showOn:"both",
+      //                 changeYear:true,
+      //                 changeMonth:true,
+      //                 dateFormat:'yy-mm-dd',
+      //                 maxDate: new Date(),
+      //                 yearRange: '1920:2020',
+      //                 onSelect:function (dateText, inst) {
+      //                     scope.$apply(function(scope){
+      //                         // Change binded variable
+      //                         ngModel.assign(scope, dateText);
+      //                     });
+      //                 }
+      //             });
+      //         });
+      //     }
+      // });
+
+
+              // function(dateFilter) {
+              //         return {
+              //                 require: 'ngModel',
+              //                 template: '<input type="date" name="datePicker" id="datePicker" value=""></input>',
+              //                 replace: true,
+              //
+              //                 link: function(scope, elm, attrs, ngModelCtrlVal) {
+              //                         ngModelCtrlVal.$formatters.unshift(function(val) {
+              //                                 return dateFilter(val, 'yyyy/MM/dd');
+              //                         });
+              //
+              //                         ngModelCtrlVal.$parsers.unshift(function(val) {
+              //                                 return new Date(val);
+              //                         });
+              //                 },
+              //         };
+              // });
+
+    </script>
+    <title>Expenses Data Input</title>
+
+  </head>
+  <body>
+    <div id="outer" ng-controller="AngularController">
+
+      <div data-role="page">
+        <div data-role="header">
+          <h1>Input Transaksi</h1>
+        </div>
+
+        <div data-role="main" class="ui-content">
+          <form name="inputform" id="inputform" ng-submit="send()">
+
+            <fieldset class="ui-field-contain">
+                <label for="tname">Jenis Transaksi</label>
+                <select name="tname" id="tname" ng-model="tname">
+                  <option value="invalid" selected="selected">--Tolong Pilih--</option>
+                  <option value="makan">Makan</option>
+                  <option value="dining">Dining Out</option>
+                  <option value="groceries">Groceries</option>
+                  <option value="transport">Transport</option>
+                  <option value="other">Others</option>
+                  <option value="comm">Communication</option>
+                  <option value="giving">Giving</option>
+                  <option value="atm">Ambil ATM</option>
+                  <option value="recurr">Subscription</option>
+                  <option value="indo">Kirim Indo</option>
+                  <option value="big">Big Money (for?)</option>
+                  <option value="saving">Tabungan</option>
+                  <option value="correction_plus">Correction +</option>
+                  <option value="correction_minus">Correction -</option>
+                </select>
+            </fieldset>
+
+            <label for="dname">Keterangan Transaksi</label>
+            <input data-clear-btn="true" type="text" name="dname" id="dname" placeholder="Taxi ke kantor...etc." ng-model="dname">
+
+            <label for="tval">Harga Transaksi</label>
+            <table style='width:100%'><tr>
+                <td>
+                  <input data-clear-btn="true" type="number" step="0.01" min="0" name="tval" id="tval" ng-model="tval">
+                </td>
+                <td style='font-size:80%; width:12em'>
+                  <label for="Cash">Dari Dompet</label>
+                  <input type="checkbox" name="Cash" id="Cash" value="Cash" checked ng-model="dompet_cash">
+                </td>
+            </tr></table>
+
+
+            <label for="datePicker">Tanggal transaksi (Otomatis diset ke sekarang, hanya ubah bila diperlukan)</label>
+            <!-- <input type="text" name="datePicker" id="datePicker" value="" ng-model="tdate" my-datepicker/> -->
+	     	    <!-- <input type="datePicker" name="datePicker" id="datePicker" value=""  ng-model="datePicker"/> -->
+	     	    <input type="date" name="datePicker" id="datePicker" value=""  ng-model="tdate" ng-change="setDate()"/>
+            <!-- <input date-input-time ng-model="tdate" /> -->
+
+            <input type="reset"  value="Reset" ng-click="resetForm()">
+            <input id="submitButton" type="submit" value="Simpan" ng-disabled="!submit_enabled">
+
+          </form>
+        </div>
+
+        <div data-role="main" class="ui-content">
+        <!-- <div> -->
+          <form name="loginform" id="loginform">
+            <label for="loggedUser">Terlogin sebagai</label>
+            <select id="loggedUser" name="loggedUser" ng-model="loggedname" ng-change="loginChange()" >
+            <!-- ng-options="o.name for o in logged_name_opt track by o.name"
+             ng-init = 'loggedname  = logged_name_opt[0]'> -->
+              <option value="">---Log out(please login first)---</option>
+              <option value="feifei">feifei</option>
+              <option value="billy">billy</option>
+            </select>
+          </form>
+        </div>
+        <!-- <div>
+          <!-- <a class="btn" ng-click="selectFromArray()">select from array</a> -->
+          <!-- <a class="btn" id="testButton">select from array</a> -->
+        <!-- </div> -->
+
+        <div data-role="footer">
+          <h1>v0.01</h1>
+        </div>
+
+        <!-- <tt>value = {{tdate | date: "yyyy-MM-ddTHH:mm:ss"}}</tt><br/> -->
+        <tt>saldo = {{saldo_akhir}},datetime = {{display_date | date: "yyyy-MM-ddTHH:mm:ss"}}, datechanged={{date_changed}}, loggedin={{submit_enabled}}, as {{loggedname}}, dari dompet={{dompet_cash}}</tt><br/>
+
+      </div><!-- <div data-role="page"> -->
+
+    </div> <!-- <div ng-controller="AngularController">  -->
+
+  </body>
+
+</html>

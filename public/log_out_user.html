@@ -1,0 +1,17 @@
+<!doctype html>
+<html>
+  <head>
+
+    <script src="parse-1.6.0.min.js"></script>
+
+    <script>
+      Parse.initialize("dCxojn2rtpic9RlfY6mjwTqWHNjHqsUOvwzPTl0Y","7EiCWZRWL8jgwnQRUmzwT1oHjichXSCZp7KvKeHI");
+      var currentUser = Parse.User.current();
+      if (currentUser) {
+          // do stuff with the user
+          Parse.User.logOut();
+      }
+    </script>
+  </head>
+
+</html>

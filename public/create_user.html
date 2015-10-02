@@ -1,0 +1,32 @@
+<!doctype html>
+<html>
+  <head>
+
+    <script src="parse-1.6.0.min.js"></script>
+
+    <script>
+      Parse.initialize("dCxojn2rtpic9RlfY6mjwTqWHNjHqsUOvwzPTl0Y","7EiCWZRWL8jgwnQRUmzwT1oHjichXSCZp7KvKeHI");
+      var user = new Parse.User();
+      // user.set("username", "billy");
+      // user.set("password", "dancux");
+      user.set("username", "feifei");
+      user.set("password", "gatau");
+      user.set("email", "email@gatau.com");
+
+      // other fields can be set just like with Parse.Object
+      user.set("dompet", 0);
+
+      user.signUp(null, {
+        success: function(user) {
+          // Hooray! Let them use the app now.
+          console.log(user);
+        },
+        error: function(user, error) {
+          // Show the error message somewhere and let the user try again.
+          alert("Error: " + error.code + " " + error.message);
+        }
+      });
+    </script>
+  </head>
+
+</html>
