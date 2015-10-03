@@ -66,6 +66,8 @@
           $("#tname").val('invalid');
           $('#tname').selectmenu('refresh', true);
           $("#Cash").attr("checked",true).checkboxradio("refresh");
+          $scope.show_submitted_data=false;
+          $scope.show_submitted_button_label = 'Show Submitted';
 
           if (currentUser) {
             $("#loggedUser").val(currentUser.get('username'));//currentUser.get('username'));
@@ -250,6 +252,7 @@
               alert('logged out, please login again for input data');
               $("#inputform").trigger('reset');
               $scope.resetForm();
+              hideSubmittedDisplay();disableToggleSubmittedDisplayButton();
               break;
             case 'billy':
               console.log('logining billy');
@@ -258,6 +261,7 @@
               }
               $('#submitButton').prop('disabled',true);
               $('#submitButton').button('refresh');
+              hideSubmittedDisplay();disableToggleSubmittedDisplayButton();
               Parse.User.logIn("billy", "dancux", {
                 success: function(user) {
                   $('#submitButton').prop('disabled',false);
@@ -272,6 +276,7 @@
                   retrieveSaldoAkhir();
                   $("#inputform").trigger('reset');
                   $scope.resetForm();
+                  enableToggleSubmittedDisplayButton();
                 },
                 error: function(user, error) {
                   $('#submitButton').prop('disabled',true);
@@ -298,6 +303,7 @@
               }
               $('#submitButton').prop('disabled',true);
               $('#submitButton').button('refresh');
+              hideSubmittedDisplay();disableToggleSubmittedDisplayButton();
               Parse.User.logIn("feifei", "gatau", {
                 success: function(user) {
                   $('#submitButton').prop('disabled',false);
@@ -313,6 +319,7 @@
                   retrieveSaldoAkhir();
                   $("#inputform").trigger('reset');
                   $scope.resetForm();
+                  enableToggleSubmittedDisplayButton();
                 },
                 error: function(user, error) {
                   $('#submitButton').prop('disabled',true);
@@ -331,10 +338,43 @@
               break;
           }
         }
+
+        function hideSubmittedDisplay(){
+          $scope.show_submitted_data = false;
+          $scope.show_submitted_button_label = 'Show Submitted';
+        }
+
+        function disableToggleSubmittedDisplayButton(){
+          $('#toggleSubmittedDisplay').prop('disabled',true);
+          //$('#toggleSubmittedDisplay').button('refresh');
+          hideSubmittedDisplay();
+        }
+
+        function enableToggleSubmittedDisplayButton(){
+          $('#toggleSubmittedDisplay').prop('disabled',false);
+          //$('#toggleSubmittedDisplay').button('refresh');
+        }
+
+        $scope.toggleSubmittedDisplay = function toggleSubmittedDisplay(){
+          if ($scope.show_submitted_data == false){
+            $scope.show_submitted_data = true;
+            $scope.show_submitted_button_label = 'Hide Submitted';
+            //$("#showSubmittedData").show();
+            //console.log('turning show');
+          }
+          else {
+            $scope.show_submitted_data = false;
+            $scope.show_submitted_button_label = 'Show Submitted';
+            //$("#showSubmittedData").hide();
+            //console.log('turning hide');
+          }
+        };
+
       }
 
       $(document).ready(function(){
         $("#Cash").attr("checked",true).checkboxradio("refresh");
+        //$("#showSubmittedData").hide();
       });
 
       var app = angular.module("expenseApp",[]);
@@ -415,13 +455,21 @@
               <option value="billy">billy</option>
             </select>
           </form>
+          <button id="toggleSubmittedDisplay" ng-click="toggleSubmittedDisplay()">
+            {{show_submitted_button_label}}
+          </button>
+        </div>
+        <div ng-show="show_submitted_data" id="showSubmittedData">
+          hi jangkrik
+          kentut kali pun
         </div>
 
         <div data-role="footer">
-          <h1>v0.01</h1>
+          <h1>v0.02</h1>
         </div>
 
         <tt>saldo = {{saldo_akhir}},datetime = {{display_date | date: "yyyy-MM-ddTHH:mm:ss"}}, datechanged={{date_changed}}, loggedin={{submit_enabled}}, as {{loggedname}}, dari dompet={{dompet_cash}}</tt><br/>
+
 
       </div>
 
