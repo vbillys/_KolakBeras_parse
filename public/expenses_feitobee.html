@@ -48,8 +48,10 @@
                 month = "0" + month;
             if(day < 10)
                 day = "0" + day;
-            var days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-            var today = now.getFullYear() + '-' + month + '-' + day + ' ' + days[now.getDay()];
+            //var days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+            var days = ['Sun','Mon','Tue','Wed','Thurs','Fri','Sat'];
+            //var today = now.getFullYear() + '-' + month + '-' + day + ' ' + days[now.getDay()];
+            var today = day + '-' + month + ' ' + days[now.getDay()];
             return today
           }
 
@@ -533,12 +535,14 @@
         <div ng-show="show_submitted_data" id="showSubmittedData">
           <table rules="cols">
             <tr ng-repeat="x in queried_data">
-              <td>{{ x.Tanggal }}</td>
-              <td>{{ x.Type }}</td>
+              <td>
+                {{ x.Tanggal }}
+                {{ x.Type }}
+              </td>
               <td>{{ x.Description }}</td>
               <td>{{ x.Value }}</td>
-              <td>{{ x.Saldo }}</td>
-              <td>{{ x.Cash }}</td>
+              <!--<td>{{ x.Saldo }}</td>-->
+              <!--<td>{{ x.Cash }}</td>-->
             </tr>
           </table>
         </div>
