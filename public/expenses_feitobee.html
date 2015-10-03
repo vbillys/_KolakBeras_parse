@@ -41,6 +41,18 @@
 
       function AngularController($scope, UserService){
 
+          function getDateDayString(now){
+            var month = (now.getMonth() + 1);
+            var day = now.getDate();
+            if(month < 10)
+                month = "0" + month;
+            if(day < 10)
+                day = "0" + day;
+            var days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+            var today = now.getFullYear() + '-' + month + '-' + day + ' ' + days[now.getDay()];
+            return today
+          }
+
           var now = new Date();
           var month = (now.getMonth() + 1);
           var day = now.getDate();
@@ -383,7 +395,7 @@
                     _query.Cash        = object.get('Cash');
                     _query.Saldo       = object.get('Saldo');
                     _query.Value       = object.get('Value');
-                    _query.Tanggal     = object.get('Tanggal');
+                    _query.Tanggal     = getDateDayString(object.get('Tanggal'));
                     _queried_data.push(_query);
                   }
                   var scope = angular.element($("#outer")).scope();
@@ -423,6 +435,7 @@
       $(document).ready(function(){
         $("#Cash").attr("checked",true).checkboxradio("refresh");
         //$("#showSubmittedData").hide();
+        $("#Cash").prop('disabled',true);
       });
 
       var app = angular.module("expenseApp",[]);
@@ -437,6 +450,16 @@
 
   </head>
 
+  <!--
+  <style>
+    div.submitted_data_display
+    {
+      table { border: none; border-collapse: collapse; }
+      table td { border-left: 1px solid #000; }
+      table td:first-child { border-left: none; }
+    }
+  </style>
+  -->
 
   <body>
     <div id="outer" ng-controller="AngularController">
@@ -508,7 +531,7 @@
           </button>
         </div>
         <div ng-show="show_submitted_data" id="showSubmittedData">
-          <table>
+          <table rules="cols">
             <tr ng-repeat="x in queried_data">
               <td>{{ x.Tanggal }}</td>
               <td>{{ x.Type }}</td>
