@@ -365,6 +365,38 @@
         function getSubmittedData(){
           if ($scope.need_to_update_submitted_display){
             console.log('retrieving for submitted display..');
+            query.descending('createdAt');
+            query.equalTo('username',$scope.currentUser.get('username'))
+            query.limit(5).find({
+              success: function (results) {
+                if (typeof results === "undefined"){
+                  alert("No data at server!!!");
+                } else {
+                  console.log('there is some data...')
+                  var _queried_data = [];
+                  for (var i = 0; i < results.length; i++) {
+                    var object = results[i];
+                    console.log (object.get('Description'), object.get('Tanggal'), object.get('Value'), object.get('Saldo'), object.get('Cash'), object.get('Type'))
+                    var _query = {}
+                    _query.Description = object.get('Description');
+                    _query.Type        = object.get('Type');
+                    _query.Cash        = object.get('Cash');
+                    _query.Saldo       = object.get('Saldo');
+                    _query.Value       = object.get('Value');
+                    _query.Tanggal     = object.get('Tanggal');
+                    _queried_data.push(_query);
+                  }
+                  var scope = angular.element($("#outer")).scope();
+                  scope.$apply(function(){
+                    scope.queried_data = _queried_data;
+                  })
+                }
+              },
+              error: function (error) {
+                $scope.queried_data = undefined;
+                alert("Error: " + error.code + " " + error.message);
+              }
+            });
             $scope.need_to_update_submitted_display = false;
           }
           console.log('updating submitted display...');
@@ -476,8 +508,16 @@
           </button>
         </div>
         <div ng-show="show_submitted_data" id="showSubmittedData">
-          hi jangkrik
-          kentut kali pun
+          <table>
+            <tr ng-repeat="x in queried_data">
+              <td>{{ x.Tanggal }}</td>
+              <td>{{ x.Type }}</td>
+              <td>{{ x.Description }}</td>
+              <td>{{ x.Value }}</td>
+              <td>{{ x.Saldo }}</td>
+              <td>{{ x.Cash }}</td>
+            </tr>
+          </table>
         </div>
 
         <div data-role="footer">
