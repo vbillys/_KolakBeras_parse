@@ -68,6 +68,7 @@
           $("#Cash").attr("checked",true).checkboxradio("refresh");
           $scope.show_submitted_data=false;
           $scope.show_submitted_button_label = 'Show Submitted';
+          $scope.need_to_update_submitted_display = true;
 
           if (currentUser) {
             $("#loggedUser").val(currentUser.get('username'));//currentUser.get('username'));
@@ -163,6 +164,9 @@
 
             $('#submitButton').prop('disabled',true);
             $('#submitButton').button('refresh');
+            hideSubmittedDisplay();
+            $scope.need_to_update_submitted_display = true;
+
             _transaction_object.save().then(
               function(object) {
                 alert("input sudah diterima. Trims.");
@@ -253,6 +257,7 @@
               $("#inputform").trigger('reset');
               $scope.resetForm();
               hideSubmittedDisplay();disableToggleSubmittedDisplayButton();
+              $scope.need_to_update_submitted_display = true;
               break;
             case 'billy':
               console.log('logining billy');
@@ -262,6 +267,7 @@
               $('#submitButton').prop('disabled',true);
               $('#submitButton').button('refresh');
               hideSubmittedDisplay();disableToggleSubmittedDisplayButton();
+              $scope.need_to_update_submitted_display = true;
               Parse.User.logIn("billy", "dancux", {
                 success: function(user) {
                   $('#submitButton').prop('disabled',false);
@@ -304,6 +310,7 @@
               $('#submitButton').prop('disabled',true);
               $('#submitButton').button('refresh');
               hideSubmittedDisplay();disableToggleSubmittedDisplayButton();
+              $scope.need_to_update_submitted_display = true;
               Parse.User.logIn("feifei", "gatau", {
                 success: function(user) {
                   $('#submitButton').prop('disabled',false);
@@ -355,12 +362,21 @@
           //$('#toggleSubmittedDisplay').button('refresh');
         }
 
+        function getSubmittedData(){
+          if ($scope.need_to_update_submitted_display){
+            console.log('retrieving for submitted display..');
+            $scope.need_to_update_submitted_display = false;
+          }
+          console.log('updating submitted display...');
+        }
+
         $scope.toggleSubmittedDisplay = function toggleSubmittedDisplay(){
           if ($scope.show_submitted_data == false){
             $scope.show_submitted_data = true;
             $scope.show_submitted_button_label = 'Hide Submitted';
             //$("#showSubmittedData").show();
             //console.log('turning show');
+            getSubmittedData();
           }
           else {
             $scope.show_submitted_data = false;
