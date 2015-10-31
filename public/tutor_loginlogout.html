@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en" ng-app>
+	<head>
+		<!-- Include meta tag to ensure proper rendering and touch zooming -->
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="robots" content="noindex, nofollow">
+
+		<!-- Include jQuery Mobile stylesheets -->
+		<link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">
+		<!-- <link rel="stylesheet" href="../../docs/_assets/css/jqm-docs.css" /> -->
+		<link rel="stylesheet"  href="jquery.ui.datepicker.mobile.css" />
+
+		<!-- Include the jQuery library -->
+		<script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+		<script>
+			//reset type=date inputs to text
+			$( document ).bind( "mobileinit", function(){
+				$.mobile.page.prototype.options.degradeInputs.date = true;
+			});
+		</script>
+
+		<!-- Include the jQuery Mobile library -->
+		<script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+		<script src="jQuery.ui.datepicker.js"></script>
+		<script src="jquery.ui.datepicker.mobile.js"></script>
+
+		<!-- <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.1/angular.min.js"> </script> -->
+		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.4/angular.js"></script>
+
+		<!-- <script src="//www.parsecdn.com/js/parse-1.6.0.min.js"></script> -->
+		<script src="parse-1.6.0.min.js"></script>
+
+		<script>
+			// Code here
+			Parse.initialize("WyHgAZluBt0AWwdVU2xrIaZlwmRpN2bUDa5Ca1bo","vTfkeyv3NIu61QvEVLfMKJ9Kw90PqvBgBjiwUEwA");
+
+			var currentUser = Parse.User.current();
+
+			function AngularController($scope){
+				$scope.loginsend = function loginsend() {
+					console.log('sent login', $scope.loginusername, $scope.loginpassword)
+				}
+				$scope.registersend = function registersend() {
+					console.log('sent register', $scope.registerusername, $scope.registerpassword)
+				}
+			}
+
+			// Code ends here
+		</script>
+
+		<title>Tutorial Login & Registration</title>
+
+	</head>
+	<body>
+		<div id="outer" ng-controller="AngularController">
+			<div data-role="page">
+				<div data-role="main" class="ui-content">
+					<form name="loginform" id="loginform" ng-submit="loginsend()">
+						<label for="loginusername">Username (login)</label>
+						<input type="text" name="loginusername" id="loginusername" ng-model="loginusername">
+						<label for="loginpassword">Password (login)</label>
+						<input type="password" name="loginpassword" id="loginpassword" ng-model="loginpassword">
+						<input id="loginButton" type="submit" value="Login">
+					</form>
+				</div>
+				<div data-role="main" class="ui-content">
+					<form name="registerform" id="registerform" ng-submit="registersend()">
+						<label for="registerusername">Username (register)</label>
+						<input type="text" name="registerusername" id="registerusername" ng-model="registerusername">
+						<label for="registerpassword">Password (register)</label>
+						<input type="password" name="registerpassword" id="registerpassword" ng-model="registerpassword">
+						<input id="registerButton" type="submit" value="Register">
+					</form>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
