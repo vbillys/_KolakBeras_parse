@@ -43,7 +43,22 @@
 				$scope.registersend = function registersend() {
 					console.log('sent register', $scope.registerusername, $scope.registerpassword)
 				}
+				angular.element(document).ready(function () {
+					if (currentUser) {
+						console.log("alrd logged in ", currentUser.get('username'));
+						_msg = 'Hi, ' + currentUser.get('username') + ' , welcome back!'
+					}
+					else
+					{
+						_msg = 'Hi, please login or register'
+					}
+					var scope = angular.element($("#outer")).scope();
+					scope.$apply(function(){
+						scope.welcome_message = _msg;
+					})
+				});
 			}
+
 
 			// Code ends here
 		</script>
@@ -71,6 +86,9 @@
 						<input type="password" name="registerpassword" id="registerpassword" ng-model="registerpassword">
 						<input id="registerButton" type="submit" value="Register">
 					</form>
+				</div>
+				<div data-role="footer">
+					<tt>{{welcome_message}}</tt><br/>
 				</div>
 			</div>
 		</div>
