@@ -39,10 +39,68 @@
 			function AngularController($scope){
 				$scope.loginsend = function loginsend() {
 					console.log('sent login', $scope.loginusername, $scope.loginpassword)
+					if (currentUser) {
+						Parse.User.logOut();
+					}
+					Parse.User.logIn($scope.loginusername, $scope.loginpassword, {
+						success: function(user) {
+							// Do stuff after successful login.
+							console.log("success login ", user.get('username'));
+							var scope = angular.element($("#outer")).scope();
+							scope.$apply(function(){
+								scope.welcome_message = 'Hi, ' + user.get('username') + ' welcome back'
+							})
+						},
+						error: function(user, error) {
+							// The login failed. Check error to see why.
+							console.log("failed login!!!");
+							alert("failed login!!!");
+							var scope = angular.element($("#outer")).scope();
+							scope.$apply(function(){
+								scope.welcome_message = 'Sorry wrong password or username or just error :) logged out'
+							})
+						}
+					});
 				}
 				$scope.registersend = function registersend() {
 					console.log('sent register', $scope.registerusername, $scope.registerpassword)
+					var user = new Parse.User();
+					if ( typeof $scope.registerusername === 'undefined' || typeof $scope.registerpassword === 'undefined' ){
+
+						$scope.welcome_message = 'registering need appropriate username&/password'
+						return
+					}
+					if ( $scope.registerusername == '' || $scope.registerpassword == '' ){
+
+						$scope.welcome_message = 'registering need appropriate username&/password'
+						return
+					}
+					user.set("username", $scope.registerusername);
+					user.set("password", $scope.registerpassword);
+					if (currentUser) {
+						Parse.User.logOut()
+					}
+
+					user.signUp(null, {
+						success: function(user) {
+							// Hooray! Let them use the app now.
+							console.log(user, ' is registered as user');
+							var scope = angular.element($("#outer")).scope();
+							scope.$apply(function(){
+								scope.welcome_message = 'Congratz now '+user.get('username')+' have registered'
+							})
+						},
+						error: function(user, error) {
+							// Show the error message somewhere and let the user try again.
+							alert("Error: " + error.code + " " + error.message);
+							var scope = angular.element($("#outer")).scope();
+							scope.$apply(function(){
+								scope.welcome_message = 'error registering. logged out'
+							})
+						}
+					});
 				}
+
 				angular.element(document).ready(function () {
 					if (currentUser) {
 						console.log("alrd logged in ", currentUser.get('username'));
